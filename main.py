@@ -1,4 +1,5 @@
 from nicegui import ui
+from requests import get
 
 from quasar import *
 
@@ -49,5 +50,31 @@ with el_5:
     el_5_2.qnavigation.href("/file")
     el_5_1.qnavigation.target("_blank")
 
+
+# Table
+el_6 = table()
+el_6.selection.type("single")
+
+
+el_6.columns.add("title", "Title", "title")
+el_6.columns.add("completed", "Completed", "completed")
+
+ui.button("Add ID column", on_click=lambda: el_6.columns.add("id", "id", "id"))
+
+
+req = get("https://jsonplaceholder.typicode.com/todos")
+todos = req.json()
+
+for todo in todos:
+    el_6.rows.add(todo)
+
+
+async def get_element():
+    await ui.run_javascript(
+        f"window.table = (getElement({el_6.id})); window.table;", respond=False
+    )
+
+
+ui.button("Get element", on_click=get_element)
 
 ui.run(title="Quasar Example")
